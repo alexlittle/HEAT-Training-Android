@@ -15,33 +15,37 @@
 		drawHeader(page,section);
 		if(loggedIn()){
 			$('#login').hide();
+			$('#menu').show();
 			$('#content').show();
 			showUsername('index.html');
 		} else {
 			$('#login').show();
+			$('#menu').hide();
 			$('#content').hide();
 		}
 	}
 	function hChange(){
-		if($(location).attr('hash')){
-			showPage($(location).attr('hash'))
+		if($(location).attr('hash') && $(location).attr('hash') != '#home' ){
+			showPage($(location).attr('hash'));
 		} else {
-			showPage('#home');
+			document.location = 'index.html';
 		}
 	}
 </script>
 </head>
 <body onload="inithome()" onhashchange="hChange()">
 <div id="header"></div>
+<div id="menu">
+	<a href="#home">Modules</a>
+	|
+	<a href="#quizzes">SAQs</a>
+	|
+	<a href="#results">Results</a>
+</div>
 <div id="content">
-	<div id="menu">
-		<a href="#home">Modules</a>
-		<a href="#quizzes">Quizzes</a>
-		<a href="#results">Results</a>
-	</div>
 	<ul id="modules">
-		<li>Antenatal Care</li>
-		<li>Labour and Delivery Care</li>
+		<li><a href="anc/index.html">Antenatal Care</a></li>
+		<li><a href="ldc/index.html">Labour and Delivery Care</a></li>
 		<li><a href="pnc/index.html">Postnatal Care</a></li>
 	</ul>
 </div>
