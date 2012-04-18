@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="includes/style.css" type="text/css" />
+<link rel="stylesheet" href="includes/mquiz.css" type="text/css" />
+<script type="text/javascript" src="includes/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="includes/script.js"></script>
+<script type="text/javascript" src="includes/jquery.validate.min.js"></script>
+<script type="text/javascript" src="includes/mquiz.js"></script>
+<script type="text/javascript" src="includes/mquizengine.js"></script>
+<script type="text/javascript" src="includes/dateformat.js"></script>
+<script type="text/javascript" src="includes/quizcache.js"></script>
+<script type="text/javascript">
+	function inithome(page,section){
+		drawHeader(page,section);
+		if(loggedIn()){
+			$('#login').hide();
+			$('#content').show();
+			showUsername('index.html');
+		} else {
+			$('#login').show();
+			$('#content').hide();
+		}
+	}
+	function hChange(){
+		if($(location).attr('hash')){
+			showPage($(location).attr('hash'))
+		} else {
+			showPage('#home');
+		}
+	}
+</script>
+</head>
+<body onload="inithome()" onhashchange="hChange()">
+<div id="header"></div>
+<div id="content">
+	<div id="menu">
+		<a href="#home">Modules</a>
+		<a href="#quizzes">Quizzes</a>
+		<a href="#results">Results</a>
+	</div>
+	<ul id="modules">
+		<li>Antenatal Care</li>
+		<li>Labour and Delivery Care</li>
+		<li><a href="pnc/index.html">Postnatal Care</a></li>
+	</ul>
+</div>
+<div id="login">
+	<h2>Login</h2>
+	<div class='formblock'>
+		<div class='formlabel' id='login_username'>Email:</div>
+		<div class='formfield'><input type='text' name='username' id='username'></input></div>
+	</div>
+	<div class='formblock'>
+		<div class='formlabel' id='login_password'>Password:</div>
+		<div class='formfield'><input type='password' name='password' id='password'></input></div>
+	</div>
+	<div class='ctrl'><input type='button' name='submit' value='Login' onclick='login()' class='button'></input></div>
+</div>
+<div id="footer"></div>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en" xml:lang="en">
+<head>
+<link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 style="margin:10px 0;text-align:center">Health Education and Training (HEAT) Modules</h1>
+</div>
+<div id="content">
+<h2 style="margin:10px;"><a href="anc/index.html">Antenatal Care</a></h2>
+<h2 style="margin:10px;"><a href="ldc/index.html">Labour and Delivery Care</a></h2>
+<h2 style="margin:10px;"><a href="pnc/index.html">Postnatal Care</a></h2>
+</div>
+
+<div id="footer">
+The HEAT modules are released under a Creative Commons licence.
+For more information about the HEAT modules visit: <a href="http://www.open.ac.uk/africa/heat">http://www.open.ac.uk/africa/heat</a>
+</div>
+</body>
+
+</html>
