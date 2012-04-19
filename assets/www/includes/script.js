@@ -36,8 +36,7 @@ function drawHeader(page,section){
 	$('#header').append(ht);
 	var hr = $('<div>').attr({'id':'header-right'});
 	$('#header').append(hr);
-	var un = $('<div>').attr({'id':'logininfo'});
-	hr.append(un);
+	
 	$('#header').append("<div style='clear:both'></div>");
 	
 	if(section){
@@ -58,6 +57,9 @@ function drawHeader(page,section){
 		m.append(saq);
 		$('#header').append(m);	
 	}
+	
+	var un = $('<div>').attr({'id':'logininfo'});
+	$('#footer').append(un);
 	
 	
 }

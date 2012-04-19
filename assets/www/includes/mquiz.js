@@ -2,7 +2,7 @@
 var DATA_CACHE_EXPIRY = 60; // no of mins before the data should be updated from server;
 
 $.ajaxSetup({
-	url: "http://mquiz.org/api/?format=json",
+	url: "http://10.0.2.2/mquiz/api/?format=json",
 	type: "POST",
 	headers:{},
 	dataType:'json',
