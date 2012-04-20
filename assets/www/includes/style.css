@@ -49,6 +49,10 @@ li {
 	padding:10px;
 }
 
+
+#header-title {
+	margin:10px;
+}
 #logininfo{
 	display:block;
 }
