@@ -42,7 +42,16 @@ li {
 	margin:5px 5px;
 }
 
+#footer {
+	clear:both;
+	margin-top:20px;
+	border-top: 1px solid #9aca3c;
+	padding:10px;
+}
 
+#logininfo{
+	display:block;
+}
 #menu {
 	background: #9aca3c;
 	color:#444;
@@ -55,6 +64,7 @@ li {
 #menu a{
 	color: #444;
 }
+
 
 .clickable {
 	cursor:pointer;

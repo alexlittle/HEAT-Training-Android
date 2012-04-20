@@ -2,7 +2,7 @@
 var DATA_CACHE_EXPIRY = 60; // no of mins before the data should be updated from server;
 
 $.ajaxSetup({
-	url: "http://10.0.2.2/mquiz/api/?format=json",
+	url: "http://mquiz.org/api/?format=json",
 	type: "POST",
 	headers:{},
 	dataType:'json',
@@ -79,7 +79,6 @@ function showPage(hash){
 function showLocalQuizzes(){
 	$('#content').empty();
 	var localQuizzes = $('<div>').attr({'id':'localq'}); 
-	localQuizzes.append("Quizzes stored locally:");
 	$('#content').append(localQuizzes);
 	var qs = store.get('quizzes');
 	for (var q in qs){
@@ -259,7 +258,7 @@ function logout(home){
 function showUsername(home){
 	$('#logininfo').empty();
 	if(store.get('displayname') != null){
-		$('#logininfo').text(store.get('displayname') + " ");
+		$('#logininfo').text("Logged in as: " + store.get('displayname') + " ");
 	} 
 	if(store.get('username') != null){
 		var lo = $('<a>').text("Logout");
