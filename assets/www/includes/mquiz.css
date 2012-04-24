@@ -33,11 +33,10 @@ li {
 	float:left;	
 }
 
-#header-title {
-	font-size:130%;
-}
 #header-title h1 {
+	font-size:130%;
 	display:inline;
+	vertical-align:middle;
 	color: #77a240;
 }
 
@@ -60,10 +59,9 @@ li {
 	padding:5px;
 }
 
-#login h2 {
-	font-size:110%;
-	text-align: center;
-	padding:5px;
+
+#menu a{
+	color: #444;	
 }
 
 .error {
@@ -239,6 +237,7 @@ label.error{
 	color:#77a240;
 }
 
+
 .ress {
 	float:left;
 	width:30%;
@@ -261,7 +260,6 @@ label.error{
 	text-align: left;
 }
 
-
 .thrs {
 	float:left;
 	width:30%;
@@ -270,4 +268,18 @@ label.error{
 .thrr {
 	float:left;
 	width:20%;
+}
+
+#feedback {
+	text-align:center;
+	min-height:100px;
+}
+#fbtext {
+	text-align:center;
+	width:80%;
+	margin: 10px auto;
+}
+
+#qs {
+	min-height:200px;
 }

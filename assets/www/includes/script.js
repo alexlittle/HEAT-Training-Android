@@ -1,13 +1,68 @@
-function init(page,section){
+
+function initMQuiz(){
+	var opts = {
+			'menu':[{'title':'Modules','link':'#modules'},
+			        {'title':'SAQs','link':'#quizzes'},
+			        {'title':'Results','link':'#results'}],
+			'allowregister': false,
+			'url':'https://localhost/mquiz/api/?format=json'
+			};
+	$('#modules').hide();
+	mQ.init(opts);
+	mQ.onLogin = function(){
+		$('#menu').show();
+		$('#content').empty();
+		$('#modules').show();
+		loadQuizzesFromCache();
+	}
+}
+
+function inithome(page,section){
+	initMQuiz();
+	mQ.onLogout = function(){
+		$('#modules').hide();
+		$('#menu').hide();
+		document.location = 'index.html';
+	}
 	
 	drawHeader(page,section);
-	if(loggedIn()){
-		showUsername('../index.html');
-		dataUpdate();
+	if(mQ.loggedIn()){
+		$('#modules').show();
+		mQ.showMenu();
+		mQ.showUsername('index.html');
+	} else {
+		$('#modules').hide();
+		$('#menu').hide();
+		mQ.showLogin('#modules');
+	}
+}
+
+function hChange(){
+	if($(location).attr('hash') && $(location).attr('hash') != '#modules' ){
+		mQ.showPage($(location).attr('hash'));
+		$('#modules').hide();
+	} else if($(location).attr('hash') && $(location).attr('hash') == '#modules' ){
+		$('#content').empty();
+		$('#modules').show();
+	} else{
+		document.location = '#modules';
+	}
+}
+
+function init(page,section){
+	initMQuiz();
+	mQ.onLogout = function(){
+		$('#modules').hide();
+		$('#menu').hide();
+		document.location = '../index.html';
+	}
+	drawHeader(page,section);
+	if(mQ.loggedIn()){
+		mQ.showUsername('../index.html');
+		mQ.dataUpdate();
 	} else {
 		document.location = "../index.html";
 	}
-	
 }
 
 
@@ -60,6 +115,4 @@ function drawHeader(page,section){
 	
 	var un = $('<div>').attr({'id':'logininfo'});
 	$('#footer').append(un);
-	
-	
 }
