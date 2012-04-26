@@ -5,7 +5,7 @@ function initMQuiz(){
 			        {'title':'SAQs','link':'#quizzes'},
 			        {'title':'Results','link':'#results'}],
 			'allowregister': false,
-			'url':'https://localhost/mquiz/api/?format=json'
+			'url':'http://mquiz.org/api/?format=json'
 			};
 	$('#modules').hide();
 	mQ.init(opts);
@@ -29,7 +29,7 @@ function inithome(page,section){
 	if(mQ.loggedIn()){
 		$('#modules').show();
 		mQ.showMenu();
-		mQ.showUsername('index.html');
+		mQ.showUsername();
 	} else {
 		$('#modules').hide();
 		$('#menu').hide();
@@ -58,8 +58,7 @@ function init(page,section){
 	}
 	drawHeader(page,section);
 	if(mQ.loggedIn()){
-		mQ.showUsername('../index.html');
-		mQ.dataUpdate();
+		mQ.showUsername();
 	} else {
 		document.location = "../index.html";
 	}
@@ -115,4 +114,8 @@ function drawHeader(page,section){
 	
 	var un = $('<div>').attr({'id':'logininfo'});
 	$('#footer').append(un);
+}
+
+function playVid(file){
+	window.plugins.videoPlayer.play("file:///sdcard/heat/"+file);
 }
