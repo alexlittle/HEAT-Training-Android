@@ -59,7 +59,6 @@ li {
 	padding:5px;
 }
 
-
 #menu a{
 	color: #444;	
 }
@@ -283,3 +282,25 @@ label.error{
 #qs {
 	min-height:200px;
 }
+#searchform {
+	font-size:110%;
+	width:80%;
+	margin:5px auto;
+}
+#searchterms {
+	width:80%;
+	font-size:130%;
+}
+#searchbtn {
+	width:15%;
+	font-size:130%;
+}
+
+#msg {
+	width:80%;
+	margin:0 auto;
+	text-align:center;
+	font-size:80%;
+}
+.warn {
+	color: red;

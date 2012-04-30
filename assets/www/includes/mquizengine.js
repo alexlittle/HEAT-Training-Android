@@ -13,11 +13,21 @@ function mQuiz(){
 	};
 	this.store = null;
 	
-	this.init = function(opts){
-		this.opts = opts;
+	this.initStore = function(){
 		this.store = new Store();
 		this.store.init();
-		
+	}
+	
+	this.init = function(opts){
+		this.opts = opts;
+		this.initStore();
+		if(this.store.get('username') == 'anon'){
+			this.logout(true);
+		}
+		if(this.opts.allowanon && !this.store.get('username')){
+			this.store.set('username','anon');
+			this.store.set('password','anon');
+		}
 		if(!this.opts.url){
 			this.opts.url = "../api/?format=json";
 		}
@@ -142,11 +152,16 @@ function mQuiz(){
 		
 		mQ.showMenu();
 		
-		var searchform = $('<div>').attr({'id':'search','class':'formblock'});
-		searchform.append($('<div>').attr({'id':'searchtitle','class':'formlabel'}).text("Search quizzes:"));
-		var ff = $('<div>').attr({'class':'formfield'});
+		var searchform = $('<div>').attr({'id':'searchform'});
+		searchform.append($('<div>').attr({'id':'searchtitle'}).text("Search quizzes:"));
+		var ff = $('<div>').attr({'class':'search'});
 		var sterms = $('<input>').attr({'id':'searchterms'});
+		var sbtn = $('<input>').attr({'type':'button','id':'searchbtn','value':'Go'});
+		sbtn.click(function(){
+				mQ.doSearch();
+			});
 		ff.append(sterms);
+		ff.append(sbtn);
 		searchform.append(ff);
 		$('#content').append(searchform);
 		
@@ -193,10 +208,13 @@ function mQuiz(){
 		$('#content').empty();
 		var str = "<h2>Login";
 		if(this.opts.allowregister){
-			str += "(or <a onclick='mQ.showRegister()'>Register</a>)";
+			str += " (or <a href='#register'>Register</a>)";
 		}
 		str += "</h2>";
 		$('#content').append(str);
+		var msg = $('<div>').attr({'id':'msg'});
+		$('#content').append(msg);
+		msg.hide();
 		var form =  $('<div>');
 		form.append("<div class='formblock'>" +
 			"<div class='formlabel' name='lang' id='login_username'>Email:</div>" +
@@ -208,7 +226,7 @@ function mQuiz(){
 			"<div class='formfield'><input type='password' name='password' id='password'></input></div>" +
 			"</div>");
 		
-		form.append("<div class='ctrl'><input type='button' name='submit' value='Login' onclick='mQ.login(\""+hash+"\")' class='button'></input></div>");
+		form.append("<div class='ctrl'><input type='button' name='submit' value='Login' onclick='mQ.login(\""+hash+"\")' class='button' id='loginbtn'></input></div>");
 		$('#content').append(form);
 	};
 	
@@ -263,13 +281,18 @@ function mQuiz(){
 	};
 	
 	this.login = function(hash){
+		$('#msg').empty();
+		$('#msg').show();
 		var username = $('#username').val();
 		var password = $('#password').val();
 		if(username == '' || password == ''){
-			alert("Please enter your username and password");
+			$('#msg').append("<span class='warn'>Please enter your username and password</span>");
 			return false;
 		}
-		
+		$('#msg').append("Logging in...");
+		$('#username').attr('disabled','disabled');
+		$('#password').attr('disabled','disabled');
+		$('#loginbtn').attr('disabled','disabled');
 		$.ajax({
 			   data:{'method':'login','username':username,'password':password}, 
 			   success:function(data){
@@ -284,11 +307,19 @@ function mQuiz(){
 					   mQ.showPage(hash);
 					   mQ.onLogin();
 				   } else {
-					   alert('Login failed');
+					   $('#username').removeAttr('disabled');
+					   $('#password').removeAttr('disabled');
+					   $('#loginbtn').removeAttr('disabled');
+					   $('#msg').empty();
+					   $('#msg').append("<span class='warn'>Login failed</span>");
 				   }
 			   }, 
 			   error:function(data){
-				   alert("No connection available. You need to be online to log in.");
+				   $('#username').removeAttr('disabled');
+				   $('#password').removeAttr('disabled');
+				   $('#loginbtn').removeAttr('disabled');
+				   $('#msg').empty();
+				   $('#msg').append("<span class='warn'>No connection available. You need to be online to log in.</span>");
 			   }
 			});
 		return false;
@@ -320,7 +351,6 @@ function mQuiz(){
 			this.showLogin(hash);
 			return;
 		} 
-		mQ.dataUpdate();
 		$('#content').empty();
 		if (hash == '#register'){
 			mQ.showRegister();
@@ -362,7 +392,7 @@ function mQuiz(){
 		for (var q in qs){
 			var result = $('<div>').attr({'class':'result'});
 			var d = new Date(qs[q].quizdate);
-			var str = qs[q].quiztitle + "<br/><small>"+dateFormat(d,'HH:MM d-mmm-yy')+"</small>";
+			var str = qs[q].quiztitle + "<br/><small>"+ dateFormat(d,'HH:MM d-mmm-yy')+"</small>";
 			result.append($('<div>').attr({'class':'rest clickable','onclick':'document.location="#'+qs[q].qref +'"','title':'try this quiz again'}).html(str));
 			result.append($('<div>').attr({'class':'ress'}).text((qs[q].userscore*100/qs[q].maxscore).toFixed(0)+"%"));
 			result.append($('<div>').attr({'class':'resr'}).text(qs[q].rank));
@@ -403,7 +433,7 @@ function mQuiz(){
 	};
 
 	this.loggedIn = function(){
-		if(mQ.store.get('username') == null){
+		if(mQ.store.get('username') == null && mQ.store.get('username') != 'anon'){
 			return false;
 		} 
 		return true;
@@ -528,10 +558,8 @@ function mQuiz(){
 		$('#logininfo').empty();
 		if(mQ.store.get('displayname') != null){
 			$('#logininfo').text(mQ.store.get('displayname') + " ");
-		} 
-		if(mQ.store.get('username') != null){
 			$('#logininfo').append("<a onclick='mQ.logout()' name='lang' id='logout'>Logout</a>");
-		}
+		} 
 	};
 	
 	this.cacheQuiz = function(qref){
@@ -580,7 +608,6 @@ function Store(){
 		if (!localStorage) {
 			localStorage.setItem('username', null);
 			localStorage.setItem('password', null);
-			localStorage.setItem('lang', 'EN');
 			localStorage.setItem('quizzes', null);
 			localStorage.setItem('results', null);
 		}
@@ -588,7 +615,11 @@ function Store(){
 	
 	this.get = function(key){
 		var value = localStorage.getItem(key);
-	    return value && JSON.parse(value);
+		try{
+			return value && JSON.parse(value);
+		} catch(err){
+			return null;
+		}
 	}
 	
 	this.set = function(key,value){
@@ -1128,7 +1159,7 @@ function Quiz(){
 		next.hide();
 		
 		var d = $('<div>').attr({'class': 'resultopt clickable centre'});
-		var l = $('<a>').text("Retake '"+ this.quiz.quiztitle +"'");
+		var l = $('<a>').text("Retry '"+ this.quiz.quiztitle +"'");
 		d.append(l);
 		var qref = this.quiz.qref;
 		l.click(function(){
@@ -1183,7 +1214,7 @@ function Quiz(){
 		   error:function(data){
 			   mQ.store.addArrayItem('unsentresults',content);
 		   }
-		});		
+		});	
 	}
 	
 	this.setNav = function(){

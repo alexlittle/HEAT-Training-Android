@@ -5,7 +5,7 @@ function initMQuiz(){
 			        {'title':'SAQs','link':'#quizzes'},
 			        {'title':'Results','link':'#results'}],
 			'allowregister': false,
-			'url':'http://mquiz.org/api/?format=json'
+			'url':'../api/?format=json'
 			};
 	$('#modules').hide();
 	mQ.init(opts);
