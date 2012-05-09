@@ -1,11 +1,11 @@
 
 function initMQuiz(){
 	var opts = {
-			'menu':[{'title':'Modules','link':'#modules'},
-			        {'title':'SAQs','link':'#quizzes'},
-			        {'title':'Results','link':'#results'}],
+			'menu':[{'title':'Modules','link':'index.html#modules'},
+			        {'title':'SAQs','link':'index.html#quizzes'},
+			        {'title':'Results','link':'index.html#results'}],
 			'allowregister': false,
-			'url':'../api/?format=json'
+			'url':'http://mquiz.org/api/?format=json'
 			};
 	$('#modules').hide();
 	mQ.init(opts);
@@ -65,8 +65,7 @@ function init(page,section){
 }
 
 
-function drawHeader(page,section){
-	
+function drawHeader(page,section){	
 	var ht = $('<div>').attr({'id':'header-title'});
 	
 	var h = $('<h1>').attr({'class':'clickable'}).text("HEAT");
@@ -78,8 +77,10 @@ function drawHeader(page,section){
 		}
 	});
 	ht.append(h);
+	
+	
 	if(page){
-		ht.append(" > ");
+		ht.append("<h1> > </h1>");
 		var s = $('<h1>').attr({'class':'clickable'}).text(page);
 		s.click(function(){
 			document.location = 'index.html';
@@ -94,8 +95,7 @@ function drawHeader(page,section){
 	$('#header').append("<div style='clear:both'></div>");
 	
 	if(section){
-		ht.append(" > ");
-		ht.append(parseInt(section));
+		ht.append("<h1> > "+parseInt(section,10)+"</h1>");
 		var m = $('<div>').attr({'id':'menu'});
 		var intro = $('<a>').attr({'href':section+'intro.html'}).text("Intro");
 		var lo = $('<a>').attr({'href':section+'lo.html'}).text("Outcomes");
@@ -114,6 +114,15 @@ function drawHeader(page,section){
 	
 	var un = $('<div>').attr({'id':'logininfo'});
 	$('#footer').append(un);
+
+	var about = $('<div>').attr({'id':'aboutinfo'});
+	if(page){
+		about.append($('<a>').attr({'href':'../about.html'}).text("About"));
+	} else {
+		about.append($('<a>').attr({'href':'about.html'}).text("About"));
+	}
+	$('#footer').append(about);
+	
 }
 
 function playVid(file){

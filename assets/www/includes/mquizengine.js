@@ -193,14 +193,16 @@ function mQuiz(){
 		$('#content').empty();
 		mQ.showMenu();
 		var localQuizzes = $('<div>').attr({'id':'localq'}); 
-		localQuizzes.append("Quizzes stored locally:");
+		if(this.opts.lang){
+			localQuizzes.append(this.opts.lang.en.localquiz.title);
+		}
 		$('#content').append(localQuizzes);
 		var qs = mQ.store.get('quizzes');
 		for (var q in qs){
 			mQ.addQuizListItem(qs[q],'#localq');
 		}
 		if(!qs || qs.length == 0){
-			$(localQuizzes).append("<br/>No quizzes stored locally.");
+			$(localQuizzes).append("<br/>No quizzes");
 		}
 	};
 	
@@ -462,7 +464,7 @@ function mQuiz(){
 						 //check for any error messages
 						   if(data && !data.error){
 							   unsent[u].rank = data.rank;
-							   mQ.store.addArrayItem('results',unsent[u]);
+							   //mQ.store.addArrayItem('results',unsent[u]);
 							   mQ.store.set('lastupdate',Date());
 							   mQ.store.clearKey('unsentresults');
 						   }
@@ -1187,6 +1189,8 @@ function Quiz(){
 		content.responses = this.responses;
 		content.quiztitle = this.quiz.quiztitle;
 	
+		mQ.store.addArrayItem('results', content);
+		
 		$.ajax({
 		   data:{'method':'submit','username':mQ.store.get('username'),'password':mQ.store.get('password'),'content':JSON.stringify(content)}, 
 		   success:function(data){
@@ -1195,7 +1199,6 @@ function Quiz(){
 				   mQ.store.addArrayItem('unsentresults',content);
 			   } else {
 				   content.rank = data.rank;
-				   mQ.store.addArrayItem('results', content);
 				   // show ranking 
 				   if($('#rank') && data.rank){
 					   $('#rank').empty();

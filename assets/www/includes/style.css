@@ -7,8 +7,8 @@
 body {
 	background:#fff;
 	color:#444;
-	font-size: 100%; /* Resets 1em to 10px */
-	font-family: Verdana, 'Lucida Grande', Tahoma, Arial, Sans-Serif;
+	font-size: 110%; /* Resets 1em to 10px */
+	font-family: georgia,serif, Verdana, 'Lucida Grande', Tahoma, Arial, Sans-Serif;
 }
 
 h1 {
@@ -18,6 +18,11 @@ h1 {
 	display: inline;
 }
 
+#content h1 {
+	margin:10px;
+	display:block;
+	text-align:center;
+}
 
 a {
 	color:#77a240;
@@ -47,22 +52,29 @@ li {
 	margin-top:20px;
 	border-top: 1px solid #9aca3c;
 	padding:10px;
+	font-size:100%;
 }
-
 
 #header-title {
 	margin:10px;
 }
+
 #logininfo{
 	display:block;
 }
+
+#aboutinfo{
+	margin:10px;
+}
+
 #menu {
 	background: #9aca3c;
 	color:#444;
 	width:100%;
 	text-align: center;
-	padding:5px 0;
+	padding:10px 0;
 	font-weight:bold;
+	font-size:90%;
 }
 
 #menu a{
@@ -79,4 +91,8 @@ p.video {
 }
 img.video{
 	border:1px solid black;
+}
+
+#modules {
+	min-height:200px;
 }

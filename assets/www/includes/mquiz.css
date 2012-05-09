@@ -59,10 +59,6 @@ li {
 	padding:5px;
 }
 
-#menu a{
-	color: #444;	
-}
-
 .error {
 	color: red;
 }
@@ -176,7 +172,6 @@ div.quiznavnext {
 #footer {
 	text-align:center;
 	margin-top:10px;
-	font-size:80%;
 }
 
 .matchingstate {
