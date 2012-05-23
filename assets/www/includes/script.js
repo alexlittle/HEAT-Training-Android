@@ -11,7 +11,7 @@ function initMQuiz(){
 	mQ.init(opts);
 	mQ.onLogin = function(){
 		$('#menu').show();
-		$('#content').empty();
+		$('#mq').empty();
 		$('#modules').show();
 		loadQuizzesFromCache();
 	}
@@ -42,6 +42,7 @@ function hChange(){
 		mQ.showPage($(location).attr('hash'));
 		$('#modules').hide();
 	} else if($(location).attr('hash') && $(location).attr('hash') == '#modules' ){
+		$('#mq').empty();
 		$('#content').empty();
 		$('#modules').show();
 	} else{
