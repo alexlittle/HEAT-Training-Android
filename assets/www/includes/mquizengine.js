@@ -36,7 +36,7 @@ function mQuiz(){
 			type: "POST",
 			headers:{},
 			dataType:'json',
-			timeout: 20000
+			timeout: 60000
 		});
 		this.showUsername();
 		this.dataUpdate();
@@ -263,6 +263,10 @@ function mQuiz(){
 		var question = $('<div>').attr({'id':'question'});
 		$('#qs').append(question);
 		
+		var notify = $('<div>').attr({'id':'notify','class':'warn'});
+		$('#qs').append(notify);
+		notify.hide();
+		
 		var response = $('<div>').attr({'id':'response'});
 		$('#qs').append(response);
 		
@@ -305,6 +309,9 @@ function mQuiz(){
 					   mQ.store.set('displayname',data.name);
 					   mQ.store.set('password',data.hash);
 					   mQ.store.set('lastlogin',Date());
+					   for (var r in data.results){
+						   mQ.store.addArrayItem('results',data.results[r]);
+					   }
 					   mQ.showUsername();
 					   mQ.showPage(hash);
 					   mQ.onLogin();
@@ -381,6 +388,7 @@ function mQuiz(){
 		var results = $('<div>').attr({'id':'results'}); 
 		$('#mq').append(results);
 		var qs = mQ.store.get('results');
+
 		if(qs && qs.length>0){
 			var result = $('<div>').attr({'class':'th'});
 			result.append($('<div>').attr({'class':'thrt'}).text("Quiz"));
@@ -390,10 +398,12 @@ function mQuiz(){
 			results.append(result);
 		} else {
 			results.append("You haven't taken any quizzes yet");
+			return;
 		}
+		qs.sort(sortresults);
 		for (var q in qs){
 			var result = $('<div>').attr({'class':'result'});
-			var d = new Date(qs[q].quizdate);
+			var d = new Date(parseInt(qs[q].quizdate,10));
 			var str = qs[q].quiztitle + "<br/><small>"+ dateFormat(d,'HH:MM d-mmm-yy')+"</small>";
 			result.append($('<div>').attr({'class':'rest clickable','onclick':'document.location="#'+qs[q].qref +'"','title':'try this quiz again'}).html(str));
 			result.append($('<div>').attr({'class':'ress'}).text((qs[q].userscore*100/qs[q].maxscore).toFixed(0)+"%"));
@@ -453,27 +463,36 @@ function mQuiz(){
 		} 
 
 		// send any unsubmitted responses
-		var unsent = mQ.store.get('unsentresults');
+		var results = mQ.store.get('results');
 		
-		if(unsent){
-			for(var u in unsent){
-				$.ajax({
-					   data:{'method':'submit','username':mQ.store.get('username'),'password':mQ.store.get('password'),'content':unsent[u]}, 
-					   success:function(data){
-						   
-						 //check for any error messages
-						   if(data && !data.error){
-							   unsent[u].rank = data.rank;
-							   mQ.store.addArrayItem('results',unsent[u]);
-							   mQ.store.set('lastupdate',Date());
-							   mQ.store.clearKey('unsentresults');
+		if(results){
+			for(var r in results){
+				if(results[r].sent == false){
+					$.ajax({
+						   data:{'method':'submit','username':mQ.store.get('username'),'password':mQ.store.get('password'),'content':JSON.stringify(results[r])}, 
+						   success:function(data){
+							   
+							 //check for any error messages
+							   if(data && !data.error){
+								   cache = mQ.store.get('results');
+								   mQ.store.clearKey('results');
+								   results[r].sent = true;
+								   results[r].rank = data.rank;
+								   for (var c in cache){
+									   if(cache[c].quizdate == results[r].quizdate){
+										   mQ.store.addArrayItem('results', results[r]);
+									   }else {
+										   mQ.store.addArrayItem('results', cache[c]);
+									   }
+								   } 
+								   mQ.store.set('lastupdate',Date());
+							   }
+						   }, 
+						   error:function(data){
+							   // do nothing - will send on next update
 						   }
-						   
-					   }, 
-					   error:function(data){
-						   // do nothing - will send on next update
-					   }
-					});
+						});
+				}
 			}
 		}
 		
@@ -667,7 +686,26 @@ function Quiz(){
 	}
 	
 	this.setHeader = function(){
-		$('#quizheader').html(this.quiz.quiztitle + " Q" +(this.currentQuestion+1) + " of "+ this.quiz.q.length);
+		
+		// find how many non-info questions there are
+		var noquestions = this.quiz.q.length;
+		for(var q in this.quiz.q){
+			if(this.quiz.q[q].type == 'info'){
+				noquestions--;
+			}
+		}
+		//check if current question is info one or not
+		if(this.quiz.q[this.currentQuestion].type == 'info'){
+			$('#quizheader').html(this.quiz.quiztitle);
+		} else {
+			var currentq = 1;
+			for(var q in this.quiz.q){
+				if(this.quiz.q[q].type != 'info' && this.currentQuestion > q){
+					currentq++;
+				}
+			}
+			$('#quizheader').html(this.quiz.quiztitle + " Q" +currentq + " of "+ noquestions);
+		}
 	}
 	
 	this.loadNextQuestion = function(){
@@ -675,6 +713,8 @@ function Quiz(){
 			if(this.feedback != ""){
 				$('#question').hide();
 				$('#response').hide();
+				$('#notify').hide();
+				$('#notify').empty();
 				$('#feedback').empty();
 				$('#feedback').append("<h2>Feedback</h2><div id='fbtext'>"+this.feedback+"</div>");
 				$('#feedback').show('blind',{},500);
@@ -699,7 +739,8 @@ function Quiz(){
 			}
 
 		} else {
-			alert("Please answer this question before continuing.");
+			$('#notify').text("Please answer this question before continuing.");
+			$('#notify').show();
 		}
 	}
 	
@@ -713,10 +754,12 @@ function Quiz(){
 		this.setHeader();
 		this.setNav();
 		this.feedback = "";
-
+			
 		$('#question').html(this.quiz.q[this.currentQuestion].text);
 		this.loadResponses(this.quiz.q[this.currentQuestion]);
 		$('#feedback').hide();
+		$('#notify').empty();
+		$('#notify').hide();
 		$('#question').show('blind',{},500);
 		$('#response').show('blind',{},500);
 	}
@@ -1131,7 +1174,8 @@ function Quiz(){
 	
 	this.showResults = function(){
 		if(!this.saveResponse('next')){
-			alert("Please answer this question before getting your results.");
+			$('#notify').text("Please answer this question before getting your results.");
+			$('#notify').show();
 			return;
 		} 
 		
@@ -1150,7 +1194,27 @@ function Quiz(){
 		} else {
 			var percent = 0;
 		}
-		$('#mq').append("<div id='quizresults'>"+ percent.toFixed(0) +"%</div>");
+		
+		// find if any essay questions (so can't be marked)
+		var hasessay = false;
+		for(var q in this.quiz.q){
+			if(this.quiz.q[q].type == 'essay'){
+				hasessay = true;
+			}
+		}
+
+		if(hasessay){
+			var scorestring = percent.toFixed(0) + "% *";
+		} else {
+			var scorestring = percent.toFixed(0) + "%";
+		}
+		
+		$('#mq').append("<div id='quizresults'>"+ scorestring +"</div>");
+		
+		if(hasessay){
+			var essay = $('<div>').attr({'class': 'centre'}).text("* this quiz contained essay questions which will need to be manually marked. Your score will be updated when these questions have been marked");
+			$('#mq').append(essay);
+		}
 		
 		var rank = $('<div>').attr({'id':'rank','class': 'rank'});
 		$('#mq').append(rank);
@@ -1188,16 +1252,17 @@ function Quiz(){
 		content.quizdate = Date.now();
 		content.responses = this.responses;
 		content.quiztitle = this.quiz.quiztitle;
+		content.sent = false;
 	
+		console.log(content);
+		mQ.store.addArrayItem('results', content);
+		
 		$.ajax({
 		   data:{'method':'submit','username':mQ.store.get('username'),'password':mQ.store.get('password'),'content':JSON.stringify(content)}, 
 		   success:function(data){
 			   //check for any error messages
-			   if(!data || data.error){
-				   mQ.store.addArrayItem('unsentresults',content);
-			   } else {
+			   if(data && !data.error){
 				   content.rank = data.rank;
-				   mQ.store.addArrayItem('results', content);
 				   // show ranking 
 				   if($('#rank') && data.rank){
 					   $('#rank').empty();
@@ -1211,10 +1276,20 @@ function Quiz(){
 						   $('#next').show('blind');
 					   }
 				   }
+				   // loop through results and update rank & sent status
+				   cache = mQ.store.get('results');
+				   mQ.store.clearKey('results');
+				   content.sent = true;
+				   for (var c in cache){
+					   if(cache[c].quizdate == content.quizdate){
+						   mQ.store.addArrayItem('results', content);
+					   }else {
+						   mQ.store.addArrayItem('results', cache[c]);
+					   }
+				   } 
 			   }
 		   }, 
-		   error:function(data){
-			   mQ.store.addArrayItem('unsentresults',content);
+		   error:function(data){ 
 		   }
 		});	
 	}
@@ -1269,4 +1344,12 @@ function getUrlVars() {
         vars[hash[0]] = hash[1];
     }
     return vars;
+}
+
+function sortresults(a, b){
+	if(a.quizdate >= b.quizdate){
+		return -1;
+	} else {
+		return 1;
+	}
 }
