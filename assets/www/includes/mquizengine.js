@@ -219,7 +219,7 @@ function mQuiz(){
 		msg.hide();
 		var form =  $('<div>');
 		form.append("<div class='formblock'>" +
-			"<div class='formlabel' name='lang' id='login_username'>Email:</div>" +
+			"<div class='formlabel' name='lang' id='login_username'>Username/Email:</div>" +
 			"<div class='formfield'><input type='text' name='username' id='username'></input></div>" +
 			"</div>");
 		
