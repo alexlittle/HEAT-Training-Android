@@ -27,5 +27,5 @@ VideoPlayer.prototype.play = function(url) {
  * Load VideoPlayer
  */
 PhoneGap.addConstructor(function() {
-    PhoneGap.addPlugin("videoPlayer", new VideoPlayer());
+	PhoneGap.addPlugin("videoPlayer", new VideoPlayer());
 });

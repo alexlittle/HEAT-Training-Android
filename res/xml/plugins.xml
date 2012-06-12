@@ -52,5 +52,8 @@
     <plugin
         name="SplashScreen"
         value="org.apache.cordova.SplashScreen" />
+    <plugin
+        name="VideoPlayer"
+        value="com.phonegap.plugins.video.VideoPlayer" />
 
 </plugins>
