@@ -453,10 +453,13 @@ function mQuiz(){
 	
 	this.dataUpdate = function(){
 		if(!mQ.loggedIn(false)){
+			console.log("not logged in");
 			return;
 		}
+		console.log("logged in");
 		// check when last update made, return if too early
 		var now = new Date();
+		console.log(mQ.store.get('lastupdate'));
 		var lastupdate = new Date(mQ.store.get('lastupdate'));
 		if(lastupdate > now.addMins(-DATA_CACHE_EXPIRY)){
 			return;
