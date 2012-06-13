@@ -13,7 +13,7 @@ body {
 
 h1 {
 	font-size:120%;
-	color:#77a240;
+	color:#495525;
 	margin:5px;
 	display: inline;
 }
@@ -31,8 +31,9 @@ h1 {
 }
 
 a {
-	color:#77a240;
-	text-decoration:none;
+	color: #495525;
+	text-decoration:underline;
+    cursor:pointer;
 }
 
 ol {
