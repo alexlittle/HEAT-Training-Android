@@ -4,12 +4,22 @@ function initMQuiz(){
 			'menu':[{'title':'Modules','link':'index.html#modules'},
 			        {'title':'SAQs','link':'index.html#quizzes'},
 			        {'title':'Results','link':'index.html#results'}],
-			'allowregister': false,
-			'url':'http://mquiz.org/api/?format=json'
+			'allowregister': true,
+			//'url':'https://localhost/mquiz/api/?format=json',
+			'url':'http://mquiz.org/api/?format=json',
+			'timeout': 60000,
+			'cacheexpire':60
 			};
 	$('#modules').hide();
 	mQ.init(opts);
 	mQ.onLogin = function(){
+		$('#menu').show();
+		$('#mq').empty();
+		$('#modules').show();
+		loadQuizzesFromCache();
+	}
+	mQ.onRegister = function(){
+		mQ.showMenu();
 		$('#menu').show();
 		$('#mq').empty();
 		$('#modules').show();

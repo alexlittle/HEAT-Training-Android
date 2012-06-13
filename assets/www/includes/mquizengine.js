@@ -1,6 +1,3 @@
-
-var DATA_CACHE_EXPIRY = 60; // no of mins before the data should be updated from server;
-
 var Q = null;
 var mQ = new mQuiz();
 
@@ -10,6 +7,11 @@ function mQuiz(){
 	this.onLogin = function(){};
 	this.onLogout = function(){
 		mQ.showPage("#login");
+	};
+	this.onRegister = function(){
+		mQ.dataUpdate();
+		var hash = $(location).attr('hash');
+		mQ.showPage(hash);
 	};
 	this.store = null;
 	
@@ -31,12 +33,18 @@ function mQuiz(){
 		if(!this.opts.url){
 			this.opts.url = "../api/?format=json";
 		}
+		if(!this.opts.timeout){
+			this.opts.timeout = 60000;
+		}
+		if(!this.opts.cacheexpire){
+			this.opts.cacheexpire = 60;
+		}
 		$.ajaxSetup({
 			url: this.opts.url,
 			type: "POST",
 			headers:{},
 			dataType:'json',
-			timeout: 60000
+			timeout: this.opts.timeout
 		});
 		this.showUsername();
 		this.dataUpdate();
@@ -119,7 +127,7 @@ function mQuiz(){
 				"<div class='formlabel'>Surname:</div>" +
 				"<div class='formfield'><input type='text' name='surname' id='surname'></input></div>" +
 				"</div>");
-		form.append("<div class='ctrl'><input type='button' name='submit' value='Register' onclick='register()' class='button'></input></div>");
+		form.append("<div class='ctrl'><input type='button' name='submit' value='Register' onclick='mQ.register()' class='button'></input></div>");
 		$('#mq').append(form);
 		//data validation
 		$('#register').validate({
@@ -361,7 +369,7 @@ function mQuiz(){
 			return;
 		} 
 		$('#mq').empty();
-		if (hash == '#register'){
+		if (hash == '#register' && !mQ.loggedIn()){
 			mQ.showRegister();
 		} else if (hash == '#login' && !mQ.loggedIn()){
 			this.showLogin();
@@ -373,7 +381,7 @@ function mQuiz(){
 			}
 		} else if (hash == '#quizzes'){
 			mQ.showLocalQuizzes();
-		}else if (hash == '#results'){
+		} else if (hash == '#results'){
 			mQ.showResults();
 		}  else {
 			this.inQuiz = false;
@@ -453,15 +461,12 @@ function mQuiz(){
 	
 	this.dataUpdate = function(){
 		if(!mQ.loggedIn(false)){
-			console.log("not logged in");
 			return;
 		}
-		console.log("logged in");
 		// check when last update made, return if too early
 		var now = new Date();
-		console.log(mQ.store.get('lastupdate'));
 		var lastupdate = new Date(mQ.store.get('lastupdate'));
-		if(lastupdate > now.addMins(-DATA_CACHE_EXPIRY)){
+		if(lastupdate > now.addMins(-this.opts.cacheexpire)){
 			return;
 		} 
 
@@ -556,8 +561,7 @@ function mQuiz(){
 					   mQ.store.set('password',data.hash);
 					   mQ.store.set('lastlogin',Date());
 					   mQ.showUsername();
-					   var hash = $(location).attr('hash');
-					   mQ.showPage(hash);
+					   mQ.onRegister();		   
 				   } else if(data.error) {
 					   $('#loading').hide();
 					   $('#register').show();

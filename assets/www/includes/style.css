@@ -96,8 +96,13 @@ li {
 p.video {
 	text-align:center;
 }
+
+div.video {
+	padding:10px;
+}
 img.video{
 	border:1px solid black;
+	vertical-align:middle;
 }
 
 #modules {
